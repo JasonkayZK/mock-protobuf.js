@@ -1,18 +1,21 @@
 {
-    "name": "template-node-ts",
+    "name": "mock-protobuf",
     "version": "1.0.0",
     "scripts": {
         "c": "tsc",
-        "serve": "ts-node src/index.ts",
-        "dev": "ts-node-dev src/index.ts",
+        "serve": "ts-node bin/index.ts",
+        "dev": "ts-node-dev bin/index.ts",
         "test": "jest",
         "cover": "jest --coverage"
+    },
+    "main": "bin/index.ts",
+    "bin": {
+        "mock-pb": "bin/index.ts"
     },
     "devDependencies": {
         "@types/jest": "^24.0.13",
         "@types/node": "^12.0.2",
         "@types/supertest": "^2.0.7",
-        "faker-proto": "^1.1.0",
         "jest": "^24.8.0",
         "supertest": "^4.0.2",
         "ts-jest": "^24.0.2",
@@ -20,5 +23,12 @@
         "ts-node-dev": "^1.0.0-pre.39",
         "tslint": "^5.17.0",
         "typescript": "^3.4.5"
+    },
+    "dependencies": {
+        "commander": "^9.4.0",
+        "globby": "^11.0.0",
+        "mockjs": "^1.1.0",
+        "protobufjs": "^6.8.8",
+        "restify": "^8.5.1"
     }
 }
