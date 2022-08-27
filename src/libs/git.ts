@@ -2,16 +2,16 @@ import path from 'path';
 import fs from 'fs-extra';
 import shell from 'shelljs';
 
-export function initRepository() {
+export function initRepository(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const protoPath = path.join(process.env.HOME || '', '.proto_tmp');
         fs.ensureDirSync(protoPath);
         try {
             const configPath = path.join(process.cwd(), '.fakerpbrc');
             const config = JSON.parse(
-                fs.readFileSync(configPath, { encoding: 'utf8' })
+                fs.readFileSync(configPath, {encoding: 'utf8'})
             );
-            const { repository, branch } = config;
+            const {repository, branch} = config;
             const projectName = repository
                 .split('/')
                 .pop()

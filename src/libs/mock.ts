@@ -1,8 +1,8 @@
 import path from 'path';
 import globby from 'globby';
-import shell from 'shelljs';
+import shell from "shelljs";
 import protobuf from 'protobufjs';
-import { Random, MockjsRandom } from 'mockjs';
+import {MockjsRandom, Random} from 'mockjs';
 
 interface MethodObject {
     requestType: string;
@@ -33,11 +33,10 @@ export function initPackageDefinition(repository: string) {
     const protosPaths = globby.sync([absFilePaths]);
     // 处理proto文件 兼容注释造成的语义分析错误
     shell.sed('-i', /\/\*\/\//g, '/* //', protosPaths);
-    const packageDefinition = protosPaths.map(protosPath => {
+    return protosPaths.map(protoPaths => {
         const root = new protobuf.Root();
-        return root.loadSync(protosPath, { keepCase: true });
+        return root.loadSync(protoPaths, {keepCase: true});
     });
-    return packageDefinition;
 }
 
 export function getMethod(

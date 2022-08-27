@@ -1,6 +1,6 @@
 import mockjs, {MockjsRandom} from "mockjs";
 import restify, {Next, Request, Response} from "restify";
-import {initRepository} from "./fs";
+import {initRepository} from "./git";
 import {getMethod, getMockTpl, initPackageDefinition} from "./mock";
 
 type ConfigHandler = (

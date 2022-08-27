@@ -13,8 +13,12 @@
         "mock-pb": "bin/index.ts"
     },
     "devDependencies": {
+        "@types/fs-extra": "^9.0.13",
         "@types/jest": "^24.0.13",
+        "@types/mockjs": "^1.0.6",
         "@types/node": "^12.0.2",
+        "@types/restify": "^8.5.5",
+        "@types/shelljs": "^0.8.11",
         "@types/supertest": "^2.0.7",
         "jest": "^24.8.0",
         "supertest": "^4.0.2",
