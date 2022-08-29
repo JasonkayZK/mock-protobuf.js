@@ -2,7 +2,7 @@
 const path = require('path');
 const fs = require('fs');
 const {Command} = require('commander');
-const {DirOption, IncludeOption, ExcludeOption, PortOption, OutputPathOption} = require('./options')
+const {DirOption, IncludeOption, ExcludeOption, PortOption, OutputPathOption} = require('../src/commands/options')
 const generate = require('../src/commands/generate');
 const serve = require('../src/commands/serve');
 
