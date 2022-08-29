@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package demo;
+
+option go_package = "github.com/JasonkayZK/mock-protobuf.js/proto-gen/demo";
+
+import "google/api/annotations.proto";
+import "basic.proto";
+
+service DemoService {
+
+  rpc Demo(DemoRequest) returns (DemoResponse) {
+    option (google.api.http) = {
+      post: "/Demo"
+      body: "*"
+    };
+  }
+
+}
+
+message DemoRequest {
+  string data = 1;
+}
+
+message DemoResponse {
+  BasicResponse resp = 1;
+  string resp_data = 2;
+}

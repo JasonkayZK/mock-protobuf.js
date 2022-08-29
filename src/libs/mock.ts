@@ -1,13 +1,8 @@
 import path from 'path';
 import globby from 'globby';
 import shell from "shelljs";
-import protobuf from 'protobufjs';
+import protobuf, {Method, Root} from 'protobufjs';
 import {MockjsRandom, Random} from 'mockjs';
-
-interface MethodObject {
-    requestType: string;
-    responseType: string;
-}
 
 const TYPES: { [key: string]: string } = {
     double: '@float',
@@ -27,25 +22,26 @@ const TYPES: { [key: string]: string } = {
     bytes: '@sentence',
 };
 
-export function initPackageDefinition(repository: string) {
-    const absFilePaths = path.join(repository, '**/*.proto');
-    // 启动时读取目录下所有proto文件
-    const protosPaths = globby.sync([absFilePaths]);
-    // 处理proto文件 兼容注释造成的语义分析错误
-    shell.sed('-i', /\/\*\/\//g, '/* //', protosPaths);
-    return protosPaths.map(protoPaths => {
+export function loadProtobufDefinition(repository: string) {
+    const absFilePaths = path.posix.join(repository, '**/*.proto');
+
+    // Load all protobuf files under the repository
+    const protoPaths = globby.sync([absFilePaths]);
+
+    // Process each protobuf files, and solve semantic analysis errors caused by compatible annotations
+    shell.sed('-i', /\/\*\/\//g, '/* //', protoPaths);
+    return protoPaths.map(protoPaths => {
         const root = new protobuf.Root();
         return root.loadSync(protoPaths, {keepCase: true});
     });
 }
 
-export function getMethod(
-    packageDefinition: protobuf.Root[],
+export function getService(
+    pbDefinitions: protobuf.Root[],
     packageName: string,
     serviceName: string,
-    methodName: string
-): MethodObject | undefined {
-    const service = packageDefinition.find(pd => {
+): Root | null | undefined {
+    return pbDefinitions.find(pd => {
         try {
             pd.lookupService(`${packageName}.${serviceName}`);
             return true;
@@ -53,15 +49,24 @@ export function getMethod(
             return false;
         }
     });
-    return service?.lookup(methodName)?.toJSON() as MethodObject;
+}
+
+export function getMethod(
+    pbDefinitions: protobuf.Root[],
+    packageName: string,
+    serviceName: string,
+    methodName: string
+): Method | null | undefined {
+    const service = getService(pbDefinitions, packageName, serviceName);
+    return service?.lookup(methodName) as Method;
 }
 
 export function getMessage(
-    packageDefinition: protobuf.Root[],
+    pbDefinitions: protobuf.Root[],
     packageName: string,
     messageName: string
 ): protobuf.Type | undefined {
-    return packageDefinition
+    return pbDefinitions
         .find(pd => {
             try {
                 pd.lookupType(`${packageName}.${messageName}`);
@@ -74,27 +79,27 @@ export function getMessage(
 }
 
 export function getMockTpl(
-    packageDefinition: protobuf.Root[],
+    pbDefinitions: protobuf.Root[],
     packageName: string,
     messageType: string,
     hackMockTpl?: (
         key: string,
         type: string,
         random: MockjsRandom
-    ) => string | (() => string)
+    ) => string | (() => string),
 ) {
     const messageTypeSplit = messageType.split('.');
     if (messageTypeSplit.length) {
         messageType = messageTypeSplit.pop()!;
         packageName = messageTypeSplit.join('.');
     }
-    const message = getMessage(packageDefinition, packageName, messageType);
+    const message = getMessage(pbDefinitions, packageName, messageType);
     const fields = message?.fields || {};
     const keys = Object.keys(fields);
     const tpl: { [key: string]: any } = {};
     keys.forEach(key => {
         const val = fields[key];
-        const { repeated, type } = val;
+        const {repeated, type} = val;
         const mockTpl =
             (hackMockTpl && hackMockTpl(key, type, Random)) || TYPES[type];
         key = `${key}${repeated ? '|0-10' : ''}`;
@@ -102,7 +107,7 @@ export function getMockTpl(
             tpl[key] = repeated ? [mockTpl] : mockTpl;
         } else {
             const recursiveMockTpl = getMockTpl(
-                packageDefinition,
+                pbDefinitions,
                 packageName,
                 type,
                 hackMockTpl
