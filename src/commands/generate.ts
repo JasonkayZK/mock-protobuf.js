@@ -1,6 +1,6 @@
 import {getMockTpl, loadProtobufDefinition} from "../libs/mock";
 import mockjs from "mockjs";
-import protobuf, {Namespace, Type} from "protobufjs";
+import protobuf, {Namespace, ReflectionObject, Service, Type} from "protobufjs";
 import fs from 'fs-extra';
 import path from "path";
 
@@ -19,6 +19,7 @@ interface GenerateCmdOptions {
 type ProtobufMessageFilter = RegExp[];
 
 interface ProtobufMessage {
+    data: ReflectionObject,
     packageName: string;
     messageName: string;
 }
@@ -30,7 +31,7 @@ module.exports = (options: GenerateCmdOptions) => {
     let pkgDefinition = loadProtobufDefinition(options.dir);
 
     // Step 2: Filter if necessary
-    let filteredMessages = filterMethodAndMessage(pkgDefinition, ...getProtobufFiltersFromOptions(options.include, options.exclude));
+    let [filteredMessages, _] = filterProtobufDefinitions(pkgDefinition, ...getProtobufFiltersFromOptions(options.include, options.exclude));
 
     // Step 3: Generate each messages
     filteredMessages.forEach((v: ProtobufMessage[]) => {
@@ -61,45 +62,59 @@ function getRegExpString(regExpStr: string): string {
 }
 
 // Filter the protobuf definitions
-function filterMethodAndMessage(
+function filterProtobufDefinitions(
     pbDefinitions: protobuf.Root[],
     includeFilters: ProtobufMessageFilter | undefined,
     excludeFilters: ProtobufMessageFilter | undefined,
-): Map<string, ProtobufMessage[]> {
+): [Map<string, ProtobufMessage[]>, Map<string, ProtobufMessage[]>] {
 
-    let retMaps = new Map<string, ProtobufMessage[]>();
+    let retMessageMaps = new Map<string, ProtobufMessage[]>();
+    let retServiceMaps = new Map<string, ProtobufMessage[]>();
     for (let pbDefinition of pbDefinitions) {
         if (pbDefinition instanceof Namespace) {
-            handleNamespace(pbDefinition.name, pbDefinition as Namespace, includeFilters, excludeFilters, retMaps);
+            handleNamespace(pbDefinition.name, pbDefinition as Namespace,
+                includeFilters, excludeFilters, retMessageMaps, retServiceMaps);
         }
     }
 
-    return retMaps;
+    return [retMessageMaps, retServiceMaps];
 }
 
 function handleNamespace(namespace: string, pbDefinition: Namespace,
                          includeFilters: ProtobufMessageFilter | undefined,
                          excludeFilters: ProtobufMessageFilter | undefined,
-                         retMaps: Map<string, ProtobufMessage[]>) {
+                         retMessageMaps: Map<string, ProtobufMessage[]>,
+                         retServiceMaps: Map<string, ProtobufMessage[]>) {
 
     for (let i = 0; i < pbDefinition.nestedArray.length; i++) {
         let item = pbDefinition.nestedArray[i];
 
         if (item instanceof Type) {
-            if (namespace !== "" && filterProtobuf(namespace, includeFilters, excludeFilters)) {
-                return;
-            }
-            if (retMaps.has(namespace)) {
-                retMaps.get(namespace)!.push({packageName: namespace, messageName: item.name});
-            } else {
-                retMaps.set(namespace, [{packageName: namespace, messageName: item.name}]);
-            }
+            pushItem(namespace, item, includeFilters, excludeFilters, retMessageMaps);
+        } else if (item instanceof Service) {
+            pushItem(namespace, item, includeFilters, excludeFilters, retServiceMaps);
         } else if (item instanceof Namespace) {
-            handleNamespace(namespace === "" ? item.name : namespace + "." + item.name, item, includeFilters, excludeFilters, retMaps);
+            handleNamespace(namespace === "" ? item.name : namespace + "." + item.name, item,
+                includeFilters, excludeFilters, retMessageMaps, retServiceMaps);
         }
     }
 
-    return retMaps;
+    return retMessageMaps;
+}
+
+function pushItem(namespace: string, item: ReflectionObject,
+                  includeFilters: ProtobufMessageFilter | undefined,
+                  excludeFilters: ProtobufMessageFilter | undefined,
+                  retMap: Map<string, ProtobufMessage[]>) {
+
+    if (namespace !== "" && filterProtobuf(namespace, includeFilters, excludeFilters)) {
+        return;
+    }
+    if (retMap.has(namespace)) {
+        retMap.get(namespace)!.push({data: item, packageName: namespace, messageName: item.name});
+    } else {
+        retMap.set(namespace, [{data: item, packageName: namespace, messageName: item.name}]);
+    }
 }
 
 function filterProtobuf(namespace: string, includeFilters: ProtobufMessageFilter | undefined,
