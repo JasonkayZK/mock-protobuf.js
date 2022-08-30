@@ -1,6 +1,6 @@
 import {getMockTpl, loadProtobufDefinition} from "../libs/mock";
 import mockjs from "mockjs";
-import protobuf, {Message, Namespace, Type} from "protobufjs";
+import protobuf, {Namespace, Type} from "protobufjs";
 import fs from 'fs-extra';
 import path from "path";
 
@@ -16,7 +16,7 @@ interface GenerateCmdOptions {
 }
 
 // ProtobufMessageFilter packageName.serviceName.messageName
-type ProtobufMessageFilter = Map<string, boolean>;
+type ProtobufMessageFilter = RegExp[];
 
 interface ProtobufMessage {
     packageName: string;
@@ -38,7 +38,6 @@ module.exports = (options: GenerateCmdOptions) => {
         for (let protobufMessage of v) {
             let mockTpl = getMockTpl(pkgDefinition, "demo", "DemoResponse", undefined);
             let mockData = mockjs.mock(mockTpl);
-            console.log(mockData);
             processMockData(options.output, protobufMessage, mockData);
         }
     });
@@ -47,7 +46,18 @@ module.exports = (options: GenerateCmdOptions) => {
 function getProtobufFiltersFromOptions(includes?: string | undefined, excludes?: string | undefined):
     [ProtobufMessageFilter | undefined, ProtobufMessageFilter | undefined] {
 
-    return [undefined, undefined];
+    return [
+        includes === undefined || includes.length === 0 ? undefined :
+            includes.split(',').map(regExpStr => new RegExp(getRegExpString(regExpStr.trim()))),
+        excludes === undefined || excludes.length === 0 ? undefined :
+            excludes.split(',').map(regExpStr => new RegExp(getRegExpString(regExpStr.trim()))),
+    ];
+}
+
+function getRegExpString(regExpStr: string): string {
+    // Using prefix match for filters
+    regExpStr = regExpStr.replace('\.', "\\.");
+    return `^${regExpStr}`;
 }
 
 // Filter the protobuf definitions
@@ -61,7 +71,6 @@ function filterMethodAndMessage(
     for (let pbDefinition of pbDefinitions) {
         if (pbDefinition instanceof Namespace) {
             handleNamespace(pbDefinition.name, pbDefinition as Namespace, includeFilters, excludeFilters, retMaps);
-            console.log(retMaps);
         }
     }
 
@@ -73,15 +82,13 @@ function handleNamespace(namespace: string, pbDefinition: Namespace,
                          excludeFilters: ProtobufMessageFilter | undefined,
                          retMaps: Map<string, ProtobufMessage[]>) {
 
-    if (filterProtobuf(namespace, includeFilters, excludeFilters)) {
-        return new Map;
-    }
-
     for (let i = 0; i < pbDefinition.nestedArray.length; i++) {
         let item = pbDefinition.nestedArray[i];
 
         if (item instanceof Type) {
-            console.log(`message type: \n${item}`);
+            if (namespace !== "" && filterProtobuf(namespace, includeFilters, excludeFilters)) {
+                return;
+            }
             if (retMaps.has(namespace)) {
                 retMaps.get(namespace)!.push({packageName: namespace, messageName: item.name});
             } else {
@@ -98,7 +105,27 @@ function handleNamespace(namespace: string, pbDefinition: Namespace,
 function filterProtobuf(namespace: string, includeFilters: ProtobufMessageFilter | undefined,
                         excludeFilters: ProtobufMessageFilter | undefined): boolean {
 
-    return false
+    // Process for exclude filters first
+    if (excludeFilters !== undefined) {
+        if (matchFilters(namespace, excludeFilters)) {
+            return true;
+        }
+    }
+
+    // Process for include filters
+    if (includeFilters !== undefined) {
+        if (!matchFilters(namespace, includeFilters)) {
+            return true;
+        }
+    }
+
+    // Namespace has been not filtered, we pick it!
+    return false;
+}
+
+function matchFilters(namespace: string, filters: ProtobufMessageFilter): boolean {
+
+    return filters.some((filter) => filter.test(namespace));
 }
 
 function processMockData(outputPath: string, pbMessage: ProtobufMessage, mockedMessageData: any) {
