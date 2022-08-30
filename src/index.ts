@@ -2,9 +2,9 @@
 const path = require('path');
 const fs = require('fs');
 const {Command} = require('commander');
-const {DirOption, IncludeOption, ExcludeOption, PortOption, OutputPathOption} = require('../src/commands/options')
-const generate = require('../src/commands/generate');
-const serve = require('../src/commands/serve');
+const {DirOption, IncludeOption, ExcludeOption, PortOption, OutputPathOption} = require('./commands/options')
+const generate = require('./commands/generate');
+const serve = require('./commands/serve');
 
 const program = new Command();
 

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         /* Basic Options */
-        "target": "es2018",                     /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
+        "target": "ES6",                     /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
 
         //  ts-node 目前不支持es2015的的模块机制
         //  https://github.com/TypeStrong/ts-node/issues/313#issuecomment-343698812
@@ -15,7 +15,7 @@
         // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
         // "sourceMap": true,                     /* Generates corresponding '.map' file. */
         // "outFile": "./",                       /* Concatenate and emit output to single file. */
-        "outDir": "./dist/",                        /* Redirect output structure to the directory. */
+        "outDir": "./bin/",                        /* Redirect output structure to the directory. */
         "rootDir": "./src/",   /* input folder, and root dir cannot contain some ohter ts file which not in src folder*/
         // "composite": true,                     /* Enable project compilation */
         // "removeComments": true,                /* Do not emit comments to output. */

@@ -8,15 +8,20 @@
         "test": "jest",
         "cover": "jest --coverage"
     },
-    "main": "bin/index.ts",
+    "main": "src/index.ts",
     "bin": {
-        "mock-pb": "bin/index.ts"
+        "mock-pb": "bin/index.js"
     },
+    "files": [
+        "dist",
+        "README.md",
+        "package.json"
+    ],
     "devDependencies": {
         "@types/fs-extra": "^9.0.13",
         "@types/jest": "^24.0.13",
         "@types/mockjs": "^1.0.6",
-        "@types/node": "^12.0.2",
+        "@types/node": "^14.18.10",
         "@types/restify": "^8.5.5",
         "@types/shelljs": "^0.8.11",
         "@types/supertest": "^2.0.7",
@@ -26,7 +31,7 @@
         "ts-node": "^8.1.0",
         "ts-node-dev": "^1.0.0-pre.39",
         "tslint": "^5.17.0",
-        "typescript": "^3.4.5"
+        "typescript": "^4.8.2"
     },
     "dependencies": {
         "commander": "^9.4.0",
