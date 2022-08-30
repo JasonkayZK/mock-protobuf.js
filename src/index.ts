@@ -22,6 +22,7 @@ program
 program.command('s').alias('serve')
     .addOption(DirOption)
     .addOption(IncludeOption)
+    .addOption(ExcludeOption)
     .addOption(PortOption)
     .action(serve).description("Create a mock server for the given protobuf");
 
