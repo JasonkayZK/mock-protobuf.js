@@ -5,6 +5,6 @@ package demo;
 option go_package = "github.com/JasonkayZK/mock-protobuf.js/proto-gen/demo";
 
 message BasicResponse {
-  int64 status = 1;
+  int32 status = 1;
   string message = 2;
 }

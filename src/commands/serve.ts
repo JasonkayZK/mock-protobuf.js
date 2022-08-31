@@ -15,8 +15,8 @@ module.exports = function (options: ServeCmdOptions) {
     console.log(options);
 
     createServer(options.dir, {
-        includeFilters: options.include,
-        excludeFilters: options.exclude,
+        include: options.include,
+        exclude: options.exclude,
         /*
           The param data is result of mock.js
           https://github.com/nuysoft/Mock

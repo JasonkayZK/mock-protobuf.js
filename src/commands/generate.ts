@@ -31,13 +31,12 @@ module.exports = (options: GenerateCmdOptions) => {
     filteredMessages.forEach((v: ProtobufMessage[]) => {
         // Step 3.2: Generate mocked protobuf message data
         for (let protobufMessage of v) {
-            let mockTpl = getMockTpl(pkgDefinition, "demo", "DemoResponse", undefined);
+            let mockTpl = getMockTpl(pkgDefinition, protobufMessage.packageName, protobufMessage.messageName, undefined);
             let mockData = mockjs.mock(mockTpl);
             processMockData(options.output, protobufMessage, mockData);
         }
     });
 }
-
 
 function processMockData(outputPath: string, pbMessage: ProtobufMessage, mockedMessageData: any) {
     // Print the mock data to the console if no output path

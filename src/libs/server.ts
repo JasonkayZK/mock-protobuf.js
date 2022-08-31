@@ -1,13 +1,15 @@
 import mockjs, {MockjsRandom} from "mockjs";
-import restify, {Next, Request, Response} from "restify";
+import restify, {Next, Request, RequestHandlerType, Response} from "restify";
 import {getMethod, getMockTpl, loadProtobufDefinition} from "./mock";
-import {ProtobufMessageFilter} from "./filter";
-
-type ResponseHandler = (res: restify.Response, data: any) => void;
+import {
+    filterProtobufDefinitions,
+    getProtobufFiltersFromOptions,
+    ProtobufMessage,
+} from "./filter";
 
 interface MockHandlerOptions {
-    includeFilters: string,
-    excludeFilters: string,
+    include: string,
+    exclude: string,
     responseHandler?: ResponseHandler;
     hackMockTpl?: (
         key: string,
@@ -16,33 +18,51 @@ interface MockHandlerOptions {
     ) => string | (() => string);
 }
 
+type ResponseHandler = (res: restify.Response, data: any) => void;
+
 const generateMockHandler = (
     repository: string,
     options: MockHandlerOptions,
-) => {
-    const {includeFilters, excludeFilters, responseHandler, hackMockTpl} = options;
+): RequestHandlerType[] => {
+    const {include, exclude, responseHandler, hackMockTpl} = options;
 
     // Step 1: Load protobuf definitions
-    const packageDefinition = loadProtobufDefinition(repository);
+    const pkgDefinition = loadProtobufDefinition(repository);
 
-    // return (req: Request, res: Response, next: Next) => {
-    //     const method = getMethod(
-    //         packageDefinition,
-    //         packageName,
-    //         serviceName,
-    //         methodName,
-    //     );
-    //     const responseType = method?.responseType || "";
-    //     const tpl = getMockTpl(
-    //         packageDefinition,
-    //         packageName,
-    //         responseType,
-    //         hackMockTpl,
-    //     );
-    //     const mockData = mockjs.mock(tpl);
-    //     responseHandler ? responseHandler(res, mockData) : res.json(mockData);
-    //     next();
-    // };
+    // Step 2: Filter if necessary
+    let [_, __, filteredMethodsMap] = filterProtobufDefinitions(pkgDefinition, ...getProtobufFiltersFromOptions(include, exclude));
+
+    // Step 3: Bind methods to the mock server handler
+    let retHandlers: RequestHandlerType[] = [];
+    filteredMethodsMap.forEach((v: ProtobufMessage[]) => {
+        // Step 3.2: Generate each handler from protobuf method data
+        for (let protobufMethods of v) {
+            let mockTpl = getMockTpl(pkgDefinition, "demo", "DemoResponse", undefined);
+            let mockData = mockjs.mock(mockTpl);
+            console.log(`mockData: ${mockData}`);
+            // processMockData(options.output, protobufMethods, mockData);
+        }
+    });
+
+    return retHandlers;
+//     return (req: Request, res: Response, next: Next) => {
+//         const method = getMethod(
+//             packageDefinition,
+//             packageName,
+//             serviceName,
+//             methodName,
+//         );
+//         const responseType = method?.responseType || "";
+//         const tpl = getMockTpl(
+//             packageDefinition,
+//             packageName,
+//             responseType,
+//             hackMockTpl,
+//         );
+//         const mockData = mockjs.mock(tpl);
+//         responseHandler ? responseHandler(res, mockData) : res.json(mockData);
+//         next();
+//     };
 };
 
 export const createServer = async (protobufRepoPath: string, options: MockHandlerOptions) => {
@@ -56,7 +76,7 @@ export const createServer = async (protobufRepoPath: string, options: MockHandle
     });
 
     // HANDLER
-    const handler = generateMockHandler(protobufRepoPath, options);
+    const handlers = generateMockHandler(protobufRepoPath, options);
 
     // PAGE ROUTES
     server.get("/", (req: Request, res: Response, next: Next) => {
@@ -77,8 +97,8 @@ export const createServer = async (protobufRepoPath: string, options: MockHandle
         res.end();
         next();
     });
-    // server.get("*", handler);
-    // server.post("*", handler);
+    // server.get("*", handlers);
+    // server.post("*", handlers);
     return {
         start: (port: number = 3333) =>
             server.listen(port, () =>

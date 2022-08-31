@@ -1,5 +1,5 @@
 // ProtobufMessageFilter packageName.serviceName.messageName
-import protobuf, {Namespace, ReflectionObject, Service, Type} from "protobufjs";
+import protobuf, {Method, Namespace, ReflectionObject, Service, Type} from "protobufjs";
 
 export type ProtobufMessageFilter = RegExp[];
 
@@ -46,25 +46,27 @@ export function filterProtobufDefinitions(
     pbDefinitions: protobuf.Root[],
     includeFilters: ProtobufMessageFilter | undefined,
     excludeFilters: ProtobufMessageFilter | undefined,
-): [Map<string, ProtobufMessage[]>, Map<string, ProtobufMessage[]>] {
+): [Map<string, ProtobufMessage[]>, Map<string, ProtobufMessage[]>, Map<string, ProtobufMessage[]>] {
 
     let retMessageMaps = new Map<string, ProtobufMessage[]>();
     let retServiceMaps = new Map<string, ProtobufMessage[]>();
+    let retMethodMaps = new Map<string, ProtobufMessage[]>();
     for (let pbDefinition of pbDefinitions) {
         if (pbDefinition instanceof Namespace) {
             handleNamespace(pbDefinition.name, pbDefinition as Namespace,
-                includeFilters, excludeFilters, retMessageMaps, retServiceMaps);
+                includeFilters, excludeFilters, retMessageMaps, retServiceMaps, retMethodMaps);
         }
     }
 
-    return [retMessageMaps, retServiceMaps];
+    return [retMessageMaps, retServiceMaps, retMethodMaps];
 }
 
 function handleNamespace(namespace: string, pbDefinition: Namespace,
                          includeFilters: ProtobufMessageFilter | undefined,
                          excludeFilters: ProtobufMessageFilter | undefined,
                          retMessageMaps: Map<string, ProtobufMessage[]>,
-                         retServiceMaps: Map<string, ProtobufMessage[]>) {
+                         retServiceMaps: Map<string, ProtobufMessage[]>,
+                         retMethodMaps: Map<string, ProtobufMessage[]>) {
 
     for (let i = 0; i < pbDefinition.nestedArray.length; i++) {
         let item = pbDefinition.nestedArray[i];
@@ -73,9 +75,11 @@ function handleNamespace(namespace: string, pbDefinition: Namespace,
             pushItem(namespace, item, includeFilters, excludeFilters, retMessageMaps);
         } else if (item instanceof Service) {
             pushItem(namespace, item, includeFilters, excludeFilters, retServiceMaps);
+        } else if (item instanceof Method) {
+            pushItem(namespace, item, includeFilters, excludeFilters, retMethodMaps);
         } else if (item instanceof Namespace) {
             handleNamespace(namespace === "" ? item.name : namespace + "." + item.name, item,
-                includeFilters, excludeFilters, retMessageMaps, retServiceMaps);
+                includeFilters, excludeFilters, retMessageMaps, retServiceMaps, retMethodMaps);
         }
     }
 
