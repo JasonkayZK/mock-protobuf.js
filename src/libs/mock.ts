@@ -18,8 +18,8 @@ const TYPES: { [key: string]: string } = {
     sfixed32: '@integer',
     sfixed64: '@string("1234567890", 1, 20)',
     bool: '@boolean',
-    string: '@sentence',
-    bytes: '@sentence',
+    string: '@sentence(1, 5)',
+    bytes: '@sentence(1, 5)',
 };
 
 export function loadProtobufDefinition(repository: string) {

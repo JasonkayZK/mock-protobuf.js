@@ -1,37 +1,22 @@
-import {createServer} from "../libs";
+import {createServer} from "../libs/server";
 
 interface ServeCmdOptions {
 
     dir: string;
 
-    include?: string | undefined;
+    include: string;
 
-    exclude?: string | undefined;
+    exclude: string;
 
-    port: number;
+    port: number | undefined;
 }
 
 module.exports = function (options: ServeCmdOptions) {
     console.log(options);
 
     createServer(options.dir, {
-        /*
-          The param req is a Restify Request entity
-          http://restify.com/docs/request-api/#request
-        */
-        getConfigHandler: req => {
-            /*
-              according to your api route
-              should return packageName, serviceName and method according to the request entity
-              eg. API Route Config /:package_name/:service_name/:method_name
-                  Request Path /coderge.demo/ReadmeService/CopyText
-            */
-            return {
-                packageName: req.params['package_name'], // 'coderge.demo',
-                serviceName: req.params['service_name'], // 'ReadmeService',
-                methodName: req.params['method_name'] // 'CopyText'
-            };
-        },
+        includeFilters: options.include,
+        excludeFilters: options.exclude,
         /*
           The param data is result of mock.js
           https://github.com/nuysoft/Mock
@@ -61,7 +46,7 @@ module.exports = function (options: ServeCmdOptions) {
             if (keyTypeHas('icon', 'string')) return '@image';
             else if (keyTypeHas('name', 'string')) return '@name';
             return '';
-        },
-    }).then(server => server.start());
+        }
+    }).then(server => server.start(options.port));
 
 }

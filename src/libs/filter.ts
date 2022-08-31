@@ -21,7 +21,7 @@ export function getProtobufFiltersFromOptions(includes?: string | undefined, exc
 }
 
 export function filterProtobuf(namespace: string, includeFilters: ProtobufMessageFilter | undefined,
-                        excludeFilters: ProtobufMessageFilter | undefined): boolean {
+                               excludeFilters: ProtobufMessageFilter | undefined): boolean {
 
     // Process for exclude filters first
     if (excludeFilters !== undefined) {
@@ -87,7 +87,7 @@ function pushItem(namespace: string, item: ReflectionObject,
                   excludeFilters: ProtobufMessageFilter | undefined,
                   retMap: Map<string, ProtobufMessage[]>) {
 
-    if (namespace !== "" && filterProtobuf(namespace, includeFilters, excludeFilters)) {
+    if (namespace !== "" && filterProtobuf(namespace + `.${item.name}`, includeFilters, excludeFilters)) {
         return;
     }
     if (retMap.has(namespace)) {
