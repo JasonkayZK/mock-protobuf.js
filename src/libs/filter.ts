@@ -1,11 +1,12 @@
 // ProtobufMessageFilter packageName.serviceName.messageName
-import protobuf, {Method, Namespace, ReflectionObject, Service, Type} from "protobufjs";
+import protobuf, {Namespace, ReflectionObject, Service, Type} from "protobufjs";
 
 export type ProtobufMessageFilter = RegExp[];
 
 export interface ProtobufMessage {
     data: ReflectionObject,
     packageName: string;
+    serviceName: string;
     messageName: string;
 }
 
@@ -51,10 +52,11 @@ export function filterProtobufDefinitions(
     let retMessageMaps = new Map<string, ProtobufMessage[]>();
     let retServiceMaps = new Map<string, ProtobufMessage[]>();
     let retMethodMaps = new Map<string, ProtobufMessage[]>();
+    let repeatedSet = new Set<string>();
     for (let pbDefinition of pbDefinitions) {
         if (pbDefinition instanceof Namespace) {
             handleNamespace(pbDefinition.name, pbDefinition as Namespace,
-                includeFilters, excludeFilters, retMessageMaps, retServiceMaps, retMethodMaps);
+                includeFilters, excludeFilters, retMessageMaps, retServiceMaps, retMethodMaps, repeatedSet);
         }
     }
 
@@ -66,39 +68,59 @@ function handleNamespace(namespace: string, pbDefinition: Namespace,
                          excludeFilters: ProtobufMessageFilter | undefined,
                          retMessageMaps: Map<string, ProtobufMessage[]>,
                          retServiceMaps: Map<string, ProtobufMessage[]>,
-                         retMethodMaps: Map<string, ProtobufMessage[]>) {
+                         retMethodMaps: Map<string, ProtobufMessage[]>,
+                         repeatedSet: Set<string>) {
 
     for (let i = 0; i < pbDefinition.nestedArray.length; i++) {
         let item = pbDefinition.nestedArray[i];
 
         if (item instanceof Type) {
-            pushItem(namespace, item, includeFilters, excludeFilters, retMessageMaps);
+            pushItem(namespace, "", "Type", item, includeFilters, excludeFilters, retMessageMaps, repeatedSet);
         } else if (item instanceof Service) {
-            pushItem(namespace, item, includeFilters, excludeFilters, retServiceMaps);
-        } else if (item instanceof Method) {
-            pushItem(namespace, item, includeFilters, excludeFilters, retMethodMaps);
+            pushItem(namespace, item.name, "Service", item, includeFilters, excludeFilters, retServiceMaps, repeatedSet);
+            for (let method of item.methodsArray) {
+                pushItem(namespace, item.name, "Method", method, includeFilters, excludeFilters, retMethodMaps, repeatedSet);
+            }
         } else if (item instanceof Namespace) {
             handleNamespace(namespace === "" ? item.name : namespace + "." + item.name, item,
-                includeFilters, excludeFilters, retMessageMaps, retServiceMaps, retMethodMaps);
+                includeFilters, excludeFilters, retMessageMaps, retServiceMaps, retMethodMaps, repeatedSet);
         }
     }
 
     return retMessageMaps;
 }
 
-function pushItem(namespace: string, item: ReflectionObject,
+function pushItem(namespace: string, serviceName: string, itemType: string, item: ReflectionObject,
                   includeFilters: ProtobufMessageFilter | undefined,
                   excludeFilters: ProtobufMessageFilter | undefined,
-                  retMap: Map<string, ProtobufMessage[]>) {
+                  retMap: Map<string, ProtobufMessage[]>,
+                  repeatedSet: Set<string>) {
 
     if (namespace !== "" && filterProtobuf(namespace + `.${item.name}`, includeFilters, excludeFilters)) {
         return;
     }
-    if (retMap.has(namespace)) {
-        retMap.get(namespace)!.push({data: item, packageName: namespace, messageName: item.name});
+
+    let repeatStr = generateRepeatStr(namespace, serviceName, itemType, item.name);
+    if (repeatedSet.has(repeatStr)) { // duplicate
+        return;
     } else {
-        retMap.set(namespace, [{data: item, packageName: namespace, messageName: item.name}]);
+        repeatedSet.add(repeatStr);
     }
+
+    if (retMap.has(namespace)) {
+        retMap.get(namespace)!.push({
+            data: item,
+            packageName: namespace,
+            serviceName: serviceName,
+            messageName: item.name
+        });
+    } else {
+        retMap.set(namespace, [{data: item, packageName: namespace, serviceName: serviceName, messageName: item.name}]);
+    }
+}
+
+function generateRepeatStr(namespace: string, serviceName: string, itemType: string, itemName: string): string {
+    return `${itemType}-${namespace}.${serviceName}.${itemName}`;
 }
 
 function getRegExpString(regExpStr: string): string {

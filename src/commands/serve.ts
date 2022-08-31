@@ -21,18 +21,6 @@ module.exports = function (options: ServeCmdOptions) {
           The param data is result of mock.js
           https://github.com/nuysoft/Mock
         */
-        responseHandler: (res, data) => {
-            /*
-              Can customize a response
-            */
-            // res.json(data);
-            // res.send(JSON.stringify(data))
-            res.json({msg: 'ok', ret: 0, data});
-        },
-        /*
-          The param data is result of mock.js
-          https://github.com/nuysoft/Mock
-        */
         /**
          * Hack mock rules of template
          * @param key protobuf message key
