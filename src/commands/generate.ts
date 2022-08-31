@@ -19,7 +19,7 @@ interface GenerateCmdOptions {
 }
 
 module.exports = (options: GenerateCmdOptions) => {
-    console.log(options);
+    // console.log(options);
 
     // Step 1: Load protobuf definitions
     let pkgDefinition = loadProtobufDefinition(options.dir);

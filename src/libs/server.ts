@@ -32,7 +32,7 @@ function generateMockHandlersMap(
 
     // Step 2: Filter if necessary
     let [_, __, filteredMethodsMap] = filterProtobufDefinitions(pkgDefinition, ...getProtobufFiltersFromOptions(include, exclude));
-    console.log(`filteredMethodsMap: ${filteredMethodsMap}`);
+    // console.log(`filteredMethodsMap: ${filteredMethodsMap}`);
 
     // Step 3: Bind methods to the mock server handler
     let retHandlersMap: Map<string, RequestHandlerType> = new Map;
@@ -40,7 +40,7 @@ function generateMockHandlersMap(
 
         // Step 3.1: Generate each handler from protobuf method data
         for (let protobufMethod of v) {
-            console.log(`protobufMethod: ${protobufMethod}`);
+            // console.log(`protobufMethod: ${protobufMethod}`);
             let methodFullName = `${protobufMethod.packageName}.${protobufMethod.data.name}`;
 
             let handler = (req: Request, res: Response, next: Next) => {
@@ -63,7 +63,7 @@ function generateMockHandlersMap(
                 if (customHandler !== undefined) { // CustomHandler response handler
                     customHandler(res, mockData);
                 } else { // We mock it
-                    console.log(mockData);
+                    // console.log(mockData);
                     res.json(mockData)
                 }
 
@@ -127,7 +127,7 @@ export const createServer = async (protobufRepoPath: string, options: MockHandle
         next();
     });
     handlersMap.forEach((handler, routePath) => {
-        console.log(`handling ${routePath}: ${handler}`)
+        console.log(`Handling routePath: ${routePath}`)
         server.get(routePath, handler);
         server.post(routePath, handler);
     })

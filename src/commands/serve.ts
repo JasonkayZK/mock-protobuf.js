@@ -12,7 +12,7 @@ interface ServeCmdOptions {
 }
 
 module.exports = function (options: ServeCmdOptions) {
-    console.log(options);
+    // console.log(options);
 
     createServer(options.dir, {
         include: options.include,

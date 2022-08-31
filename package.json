@@ -38,7 +38,7 @@
         "fs-extra": "^9.0.13",
         "globby": "^11.0.0",
         "mockjs": "^1.1.0",
-        "protobufjs": "^6.8.8",
+        "protobufjs": "^7.1.0",
         "restify": "^8.6.1",
         "shelljs": "^0.8.5"
     }

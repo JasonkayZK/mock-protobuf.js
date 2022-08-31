@@ -32,7 +32,7 @@ export function loadProtobufDefinition(repository: string) {
     shell.sed('-i', /\/\*\/\//g, '/* //', protoPaths);
     return protoPaths.map(protoPaths => {
         const root = new protobuf.Root();
-        return root.loadSync(protoPaths, {keepCase: true});
+        return root.loadSync(protoPaths, {keepCase: true, alternateCommentMode: false, preferTrailingComment: false});
     });
 }
 
