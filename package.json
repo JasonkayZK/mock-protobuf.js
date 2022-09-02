@@ -1,6 +1,6 @@
 {
-    "name": "mock-protobuf",
-    "version": "1.0.0",
+    "name": "mock-pb-cli",
+    "version": "0.0.1",
     "scripts": {
         "c": "tsc",
         "serve": "ts-node src/index.ts",
@@ -12,6 +12,18 @@
     "bin": {
         "mock-pb": "bin/index.js"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/JasonkayZK/mock-protobuf.js"
+    },
+    "author": "JasonkayZK <JasonkayZK@gmail.com>",
+    "license": "MIT",
+    "description": "A cli to mock json output from protobuf.",
+    "keywords": [
+        "mock",
+        "protobuf",
+        "cli"
+    ],
     "files": [
         "dist",
         "README.md",
