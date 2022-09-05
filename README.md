@@ -9,14 +9,10 @@ A command-line tool to mock protobuf!
 * [Install](#install)
 * [Usage](#usage)
     * [Generate Mock Data](#generate-mock-data)
-        * [Output](#output)
-        * [Directory](#directory)
-
-* [Mock Server](#mock-server)
+    * [Mock Server](#mock-server)
 * [Filter](#filter)
-    * [Include Filter](#inlcude-filter)
+    * [Include Filter](#include-filter)
     * [Exclude Filter](#exclude-filter)
-
 * [Known Issue](#known-issue)
 
 
