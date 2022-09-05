@@ -1,12 +1,12 @@
 import {Option} from "commander";
 
-let DirOption = new Option('-d, --dir <string>', 'the directory of the protobuf files').default('./proto');
+let DirOption = new Option('-d, --dir <string>', 'the directory of the protobuf files').default('.');
 
 let PortOption = new Option('-p, --port <number>', 'the port for the mock server').default(3333).env('PB_MOCK_PORT');
 
 let IncludeOption = new Option('-i, --include <string>',
     'include the specific protobuf interfaces, multiple packages split by ",", ' +
-    'such as: "packageName.serviceName.methodName"').default('.');
+    'such as: "packageName.serviceName.methodName"').default('');
 
 let ExcludeOption = new Option('-e, --exclude <string>',
     'exclude the specific protobuf interfaces, multiple packages split by ",", ' +
