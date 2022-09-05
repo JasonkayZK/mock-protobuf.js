@@ -105,11 +105,13 @@ export function getMockTpl(
             (hackMockTpl && hackMockTpl(key, type, Random)) || TYPES[type];
         key = `${key}${repeated ? '|0-10' : ''}`;
 
-        let mockKey = `${packageName}.${messageType}`
+        let mockKey = `${packageName}.${messageType}.${key}`;
+
         if (mockMemo.has(mockKey)) {
             return;
         }
 
+        mockMemo.set(mockKey, tpl); // memorize the key
         if (mockTpl) {
             tpl[key] = repeated ? [mockTpl] : mockTpl;
         } else {
@@ -122,8 +124,6 @@ export function getMockTpl(
             );
             tpl[key] = repeated ? [recursiveMockTpl] : recursiveMockTpl;
         }
-
-        mockMemo.set(mockKey, tpl);
     });
     return tpl;
 }

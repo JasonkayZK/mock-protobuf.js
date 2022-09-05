@@ -42,7 +42,7 @@ module.exports = (options: GenerateCmdOptions) => {
 function processMockData(outputPath: string, pbMessage: ProtobufMessage, mockedMessageData: any) {
     // Print the mock data to the console if no output path
     if (outputPath.length === 0) {
-        console.log(`Mocked ${pbMessage.packageName}.${pbMessage.messageName}: \n${stringify(mockedMessageData)}`);
+        console.log(`Mocked ${pbMessage.packageName}.${pbMessage.messageName}: \n${JSON.stringify(mockedMessageData, null, 2)}\n`);
         return
     }
 
