@@ -6,7 +6,7 @@ let PortOption = new Option('-p, --port <number>', 'the port for the mock server
 
 let IncludeOption = new Option('-i, --include <string>',
     'include the specific protobuf interfaces, multiple packages split by ",", ' +
-    'such as: "packageName.serviceName.methodName"').default('');
+    'such as: "packageName.serviceName.methodName"').default('.');
 
 let ExcludeOption = new Option('-e, --exclude <string>',
     'exclude the specific protobuf interfaces, multiple packages split by ",", ' +
