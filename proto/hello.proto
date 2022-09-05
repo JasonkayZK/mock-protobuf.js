@@ -16,6 +16,9 @@ service DemoService {
     };
   }
 
+  rpc AnotherDemo(AnotherDemoRequest) returns (AnotherDemoResponse) {
+  }
+
 }
 
 message DemoRequest {
@@ -23,6 +26,16 @@ message DemoRequest {
 }
 
 message DemoResponse {
+  BasicResponse resp = 1;
+  string resp_data = 2;
+}
+
+message AnotherDemoRequest {
+  string name = 1;
+  int32 age = 2;
+}
+
+message AnotherDemoResponse {
   BasicResponse resp = 1;
   string resp_data = 2;
 }

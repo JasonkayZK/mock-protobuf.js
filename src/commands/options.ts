@@ -1,6 +1,6 @@
 import {Option} from "commander";
 
-let DirOption = new Option('-d, --dir <string>', 'the directory of the protobuf files').default('./proto');
+let DirOption = new Option('-d, --dir <string>', 'the directory of the protobuf files').default('.');
 
 let PortOption = new Option('-p, --port <number>', 'the port for the mock server').default(3333).env('PB_MOCK_PORT');
 

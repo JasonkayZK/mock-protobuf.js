@@ -55,6 +55,7 @@ function generateMockHandlersMap(
                     pkgDefinition,
                     protobufMethod.packageName,
                     responseType,
+                    new Map(),
                     hackMockTpl,
                 );
                 const mockData = mockjs.mock(tpl);
