@@ -6,6 +6,7 @@ import {
     filterProtobufDefinitions,
     getProtobufFiltersFromOptions, ProtobufMessage,
 } from "../libs/filter";
+import {stringify} from "querystring";
 
 interface GenerateCmdOptions {
 
@@ -31,7 +32,7 @@ module.exports = (options: GenerateCmdOptions) => {
     filteredMessages.forEach((v: ProtobufMessage[]) => {
         // Step 3.2: Generate mocked protobuf message data
         for (let protobufMessage of v) {
-            let mockTpl = getMockTpl(pkgDefinition, protobufMessage.packageName, protobufMessage.messageName, undefined);
+            let mockTpl = getMockTpl(pkgDefinition, protobufMessage.packageName, protobufMessage.messageName, new Map(), undefined);
             let mockData = mockjs.mock(mockTpl);
             processMockData(options.output, protobufMessage, mockData);
         }
@@ -41,7 +42,7 @@ module.exports = (options: GenerateCmdOptions) => {
 function processMockData(outputPath: string, pbMessage: ProtobufMessage, mockedMessageData: any) {
     // Print the mock data to the console if no output path
     if (outputPath.length === 0) {
-        console.log(`Mocked ${pbMessage.packageName}.${pbMessage.messageName}: \n${mockedMessageData}`);
+        console.log(`Mocked ${pbMessage.packageName}.${pbMessage.messageName}: \n${stringify(mockedMessageData)}`);
         return
     }
 

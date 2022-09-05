@@ -82,6 +82,7 @@ export function getMockTpl(
     pbDefinitions: protobuf.Root[],
     packageName: string,
     messageType: string,
+    mockMemo: Map<string, any>, // mockMemo to avoid recursive struct
     hackMockTpl?: (
         key: string,
         type: string,
@@ -103,6 +104,12 @@ export function getMockTpl(
         const mockTpl =
             (hackMockTpl && hackMockTpl(key, type, Random)) || TYPES[type];
         key = `${key}${repeated ? '|0-10' : ''}`;
+
+        let mockKey = `${packageName}.${messageType}`
+        if (mockMemo.has(mockKey)) {
+            return;
+        }
+
         if (mockTpl) {
             tpl[key] = repeated ? [mockTpl] : mockTpl;
         } else {
@@ -110,10 +117,13 @@ export function getMockTpl(
                 pbDefinitions,
                 packageName,
                 type,
+                mockMemo,
                 hackMockTpl
             );
             tpl[key] = repeated ? [recursiveMockTpl] : recursiveMockTpl;
         }
+
+        mockMemo.set(mockKey, tpl);
     });
     return tpl;
 }
