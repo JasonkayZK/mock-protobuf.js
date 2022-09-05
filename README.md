@@ -1,6 +1,23 @@
 # **Mock Protobuf**
 
-A repository to mock json output from protobuf.
+A command-line tool to mock protobuf!
+
+
+
+## **Table of Contents**
+
+* [Install](#install)
+* [Usage](#usage)
+    * [Generate Mock Data](#generate-mock-data)
+        * [Output](#output)
+        * [Directory](#directory)
+
+* [Mock Server](#mock-server)
+* [Filter](#filter)
+    * [Include Filter](#inlcude-filter)
+    * [Exclude Filter](#exclude-filter)
+
+* [Known Issue](#known-issue)
 
 
 
@@ -37,17 +54,17 @@ Press `mock-pb -h` to get help:
 ```bash
 $ mock-pb -h
 
-Usage: mock-protobuf [options] [command]                           
-                                                                   
-A tool to mock protobuf                                            
-                                                                   
-Options:                                                           
-  -v, --version         output the version number                  
-  -h, --help            display help for command                   
+Usage: mock-protobuf [options] [command]
+
+A tool to mock protobuf
+
+Options:
+  -v, --version         output the version number
+  -h, --help            display help for command
 
 Commands:
   s|serve [options]     Create a mock server for the given protobuf
-  g|generate [options]  Generate mock data for the given protobuf  
+  g|generate [options]  Generate mock data for the given protobuf
   help [command]        display help for command
 ```
 
@@ -71,19 +88,19 @@ $ mock-pb g
 The command above will mock all the protobuf files under the current work directory (aka `.`)  and print all the mock data to the terminal:
 
 ```
-Mocked demo.BasicResponse: 
+Mocked demo.BasicResponse:
 {
     "status": 902735693509892,
     "message": "Vmucue hqxllqx oiloapzwp.",
     "resp": {}
 }
 
-Mocked demo.DemoRequest: 
+Mocked demo.DemoRequest:
 {
     "data": "Kqr gxxq."
 }
 
-Mocked demo.DemoResponse: 
+Mocked demo.DemoResponse:
 {
     "resp": {
         "status": -6061376970430480,
@@ -217,19 +234,19 @@ For example:
 ```bash
 $ mock-pb g -i demo
 
-Mocked demo.BasicResponse: 
+Mocked demo.BasicResponse:
 {
     "status": -978663427598816,
     "message": "Iymo zomttydmb.",
     "resp": {}
 }
 
-Mocked demo.DemoRequest: 
+Mocked demo.DemoRequest:
 {
     "data": "Mdnbfxbvoq khrbwyu sxmkev jss."
 }
 
-Mocked demo.DemoResponse: 
+Mocked demo.DemoResponse:
 {
     "resp": {
         "status": 6207610394471496,
@@ -239,13 +256,13 @@ Mocked demo.DemoResponse:
     "resp_data": "Fqwkd noiefpr ntjbcfydl."
 }
 
-Mocked demo.AnotherDemoRequest: 
+Mocked demo.AnotherDemoRequest:
 {
     "name": "Puvujqy kyxl hshuysly.",
     "age": 175838119803604
 }
 
-Mocked demo.AnotherDemoResponse: 
+Mocked demo.AnotherDemoResponse:
 {
     "resp": {
         "status": -7659482750118844,
@@ -263,7 +280,7 @@ For more particular:
 ```bash
 $ mock-pb g -i demo.DemoRequest.*
 
-Mocked demo.DemoRequest: 
+Mocked demo.DemoRequest:
 {
     "data": "Ewqzspj hjkfvvc froqdhkwe fkqsdg dytidwli."
 }
