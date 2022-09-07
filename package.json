@@ -1,6 +1,6 @@
 {
     "name": "mock-pb-cli",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "scripts": {
         "c": "tsc",
         "serve": "ts-node src/index.ts",
@@ -25,9 +25,8 @@
         "cli"
     ],
     "files": [
-        "bin/**/*.js",
-        "README.md",
-        "package.json"
+        "bin",
+        "README.md"
     ],
     "devDependencies": {
         "@types/fs-extra": "^9.0.13",
