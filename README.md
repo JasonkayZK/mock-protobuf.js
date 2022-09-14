@@ -23,7 +23,7 @@ A command-line tool to mock protobuf!
 It’s handy to just use npm to install this tool:
 
 ```bash
-npm i mock-pb-cli -g
+npm i mock-pb-cli@latest -g
 ```
 
 Or, you can build the source code on your own:

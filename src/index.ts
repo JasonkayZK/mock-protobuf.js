@@ -16,7 +16,7 @@ if (fs.existsSync(path.resolve("mock-protobuf.config-demo.json"))) {
 
 program
     .name("mock-protobuf")
-    .version("1.0.0", "-v, --version")
+    .version("v1.1.1", "-v, --version")
     .description("A tool to mock protobuf");
 
 program.command('s').alias('serve')
