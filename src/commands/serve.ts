@@ -1,4 +1,4 @@
-import {createServer} from "../libs/server";
+import {createServer, parse_response_value_from_config} from "../libs/server";
 
 interface ServeCmdOptions {
 
@@ -9,6 +9,8 @@ interface ServeCmdOptions {
     exclude: string;
 
     port: number | undefined;
+
+    config: string;
 }
 
 module.exports = function (options: ServeCmdOptions) {
@@ -27,6 +29,7 @@ module.exports = function (options: ServeCmdOptions) {
          * @param type protobuf message key type (eg. string/int32/bool...)
          * @param random
          */
+        responseHandlerMap: parse_response_value_from_config(options.config),
         hackMockTpl: (key, type, random) => {
             key = key.toLowerCase();
             const keyTypeHas = (k: string, t: string) =>

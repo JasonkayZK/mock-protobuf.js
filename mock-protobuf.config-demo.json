@@ -1,0 +1,22 @@
+{
+    "ResponseValue": [
+        {
+            "MethodName": "demo.Demo",
+            "Data": {
+                "Hello": "world"
+            }
+        },
+        {
+            "MethodName": "demo.AnotherDemo",
+            "Data": {
+                "resp": {
+                    "status": 200,
+                    "message": "ok"
+                },
+                "resp_data": {
+                    "Message": "This is a demo message"
+                }
+            }
+        }
+    ]
+}

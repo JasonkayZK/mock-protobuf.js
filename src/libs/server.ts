@@ -1,12 +1,9 @@
 import mockjs, {MockjsRandom} from "mockjs";
 import restify, {Next, Request, RequestHandlerType, Response} from "restify";
 import {getMethod, getMockTpl, loadProtobufDefinition} from "./mock";
-import {
-    filterProtobufDefinitions,
-    getProtobufFiltersFromOptions,
-    ProtobufMessage,
-} from "./filter";
+import {filterProtobufDefinitions, getProtobufFiltersFromOptions, ProtobufMessage,} from "./filter";
 import {Method} from "protobufjs";
+import {parse_configs_sync} from "./configs";
 
 interface MockHandlerOptions {
     include: string,
@@ -19,7 +16,7 @@ interface MockHandlerOptions {
     ) => string | (() => string);
 }
 
-type ResponseHandler = (res: restify.Response, data: any) => void;
+type ResponseHandler = (resp: restify.Response, data: any) => void;
 
 function generateMockHandlersMap(
     repository: string,
@@ -99,6 +96,37 @@ function getRouthPathFromOptions(method: Method): string {
         }
     }
     return "";
+}
+
+function handleEachResponseValue(responseValue: any, map: Map<string, ResponseHandler>) {
+
+    if (responseValue.hasOwnProperty("MethodName") &&
+        typeof responseValue.MethodName === 'string' &&
+        responseValue.hasOwnProperty("Data")) {
+
+        map.set(responseValue.MethodName, (resp: restify.Response, _: any) => {
+            resp.json(responseValue.Data);
+        });
+    }
+
+}
+
+export function parse_response_value_from_config(config_file?: string): Map<string, ResponseHandler> | undefined {
+
+    let configs = parse_configs_sync(config_file);
+    if (configs === undefined) {
+        return undefined;
+    }
+
+    let retMap = new Map<string, ResponseHandler>();
+    if (configs.hasOwnProperty("ResponseValue") && configs.ResponseValue instanceof Array) {
+        let responseValueArr = <Array<any>>configs.ResponseValue;
+        for (let responseValue of responseValueArr) {
+            handleEachResponseValue(responseValue, retMap);
+        }
+    }
+
+    return retMap;
 }
 
 export const createServer = async (protobufRepoPath: string, options: MockHandlerOptions) => {

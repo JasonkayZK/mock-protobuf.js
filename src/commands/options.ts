@@ -14,4 +14,6 @@ let ExcludeOption = new Option('-e, --exclude <string>',
 
 let OutputPathOption = new Option('-o, --output <string>', 'output path for result').default('');
 
-module.exports = {DirOption, PortOption, IncludeOption, ExcludeOption, OutputPathOption};
+let ConfigOption = new Option('-c, --config <string>', 'the config file path').default('mock-protobuf.config.json');
+
+module.exports = {DirOption, PortOption, IncludeOption, ExcludeOption, OutputPathOption, ConfigOption: ConfigOption};
