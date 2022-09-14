@@ -10,8 +10,8 @@ const program = new Command();
 
 let config = {};
 // 配置文件如果存在则读取
-if (fs.existsSync(path.resolve("mock-protobuf.config.json"))) {
-    config = path.resolve("mock-protobuf.config.json");
+if (fs.existsSync(path.resolve("mock-protobuf.config-demo.json"))) {
+    config = path.resolve("mock-protobuf.config-demo.json");
 }
 
 program

@@ -100,11 +100,11 @@ function getRouthPathFromOptions(method: Method): string {
 
 function handleEachResponseValue(responseValue: any, map: Map<string, ResponseHandler>) {
 
-    if (responseValue.hasOwnProperty("MessageName") &&
-        typeof responseValue.MessageName === 'string' &&
+    if (responseValue.hasOwnProperty("MethodName") &&
+        typeof responseValue.MethodName === 'string' &&
         responseValue.hasOwnProperty("Data")) {
 
-        map.set(responseValue.MessageName, (resp: restify.Response, _: any) => {
+        map.set(responseValue.MethodName, (resp: restify.Response, _: any) => {
             resp.json(responseValue.Data);
         });
     }

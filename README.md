@@ -2,7 +2,7 @@
 
 A command-line tool to mock protobuf!
 
-
+<br/>
 
 ## **Table of Contents**
 
@@ -10,12 +10,13 @@ A command-line tool to mock protobuf!
 * [Usage](#usage)
     * [Generate Mock Data](#generate-mock-data)
     * [Mock Server](#mock-server)
+        * [Mock Server Data](#mock-server-data)
 * [Filter](#filter)
     * [Include Filter](#include-filter)
     * [Exclude Filter](#exclude-filter)
 * [Known Issue](#known-issue)
 
-
+<br/>
 
 ## **Install**
 
@@ -41,7 +42,7 @@ npm run c
 npm i -g --force
 ```
 
-
+<br/>
 
 ## **Usage**
 
@@ -113,7 +114,7 @@ Mocked demo.DemoResponse:
 >
 >   -   `mock-pb g -d ../test/proto`
 
-
+<br/>
 
 #### **Output Directory**
 
@@ -148,7 +149,7 @@ $ tree
 
 The output directory is based on the protobuf `package`；
 
-
+<br/>
 
 ### **Mock Server**
 
@@ -206,7 +207,74 @@ $ curl localhost:3333/demo/DemoServiceAnotherDemo
 {"resp":{"status":-843357854531144,"message":"Vzby.","resp":{}},"resp_data":"Kvia gfkcggmuo."}
 ```
 
+<br/>
 
+#### **Mock Server Data**
+
+Sometimes, you don’t want let mock.js generating the mock data, suck as:
+
+```json
+{"resp":{"status":-843357854531144,"message":"Vzby.","resp":{}},"resp_data":"Kvia gfkcggmuo."}
+```
+
+But you need to let the server **mock the specific response**:
+
+```json
+{"resp":{"status":200,"message":"ok"},"resp_data":{"Message":"This is a demo message"}}
+```
+
+It’s easy to declare your own mock data:
+
+mock-protobuf.config.json
+
+```json
+{
+    "ResponseValue": [
+        {
+            "MethodName": "demo.Demo",
+            "Data": {
+                "Hello": "world"
+            }
+        },
+        {
+            "MethodName": "demo.AnotherDemo",
+            "Data": {
+                "resp": {
+                    "status": 200,
+                    "message": "ok"
+                },
+                "resp_data": {
+                    "Message": "This is a demo message"
+                }
+            }
+        }
+    ]
+}
+```
+
+The `MethodName` is the full name of the protobuf method (`package.method`)；
+
+Then use `-c` to declare the config file, such as `-c ./mock-protobuf.config.json`；
+
+The example is below:
+
+```bash
+$ npm run dev -- s -i demo -c ./mock-protobuf.config-demo.json
+```
+
+Then test:
+
+```bash
+$ curl localhost:3333/Demo
+{"Hello":"world"}
+
+$ curl localhost:3333/demo/DemoServiceAnotherDemo
+{"resp":{"status":200,"message":"ok"},"resp_data":{"Message":"This is a demo message"}}
+```
+
+The response has changed!
+
+<br/>
 
 ### **Filter**
 
@@ -284,7 +352,7 @@ Mocked demo.DemoRequest:
 
 This will only mock `demo.DemoRequest` message!
 
-
+<br/>
 
 #### **Exclude Filter**
 
@@ -315,6 +383,8 @@ $ mock-pb g -i demo -e demo
 ```
 
 Will generate nothing!
+
+<br/>
 
 
 

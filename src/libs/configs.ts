@@ -6,5 +6,9 @@ export function parse_configs_sync(config_file?: string): any {
         return undefined;
     }
 
+    if (!fs.existsSync(config_file)) {
+        return undefined;
+    }
+
     return fs.readJsonSync(config_file);
 }

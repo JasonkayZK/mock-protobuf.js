@@ -1,13 +1,13 @@
 {
     "ResponseValue": [
         {
-            "MessageName": "demo.Demo",
+            "MethodName": "demo.Demo",
             "Data": {
                 "Hello": "world"
             }
         },
         {
-            "MessageName": "demo.AnotherDemo",
+            "MethodName": "demo.AnotherDemo",
             "Data": {
                 "resp": {
                     "status": 200,
