@@ -6,7 +6,6 @@ import {
     filterProtobufDefinitions,
     getProtobufFiltersFromOptions, ProtobufMessage,
 } from "../libs/filter";
-import {stringify} from "querystring";
 
 interface GenerateCmdOptions {
 
