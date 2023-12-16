@@ -390,9 +390,8 @@ Will generate nothing!
 
 ## **Known Issue**
 
-Because this tool is depending on [node-restify](https://github.com/restify/node-restify) and [protobuf.js](https://github.com/protobufjs/protobuf.js), some known issue can not be avoid!
+Because this tool is depending on [protobuf.js](https://github.com/protobufjs/protobuf.js), some known issues can not be avoid!
 
--   **Resitfy does not work under Node v18:** according to the issue: [#1888](https://github.com/restify/node-restify/issues/1888)
 -   `Protobuf.js may have trouble parsing the protobuf files when it got comments in it`: according to the issue: [#1799](https://github.com/protobufjs/protobuf.js/issues/1799) or [#1616](https://github.com/protobufjs/protobuf.js/issues/1616) or [#1237](https://github.com/protobufjs/protobuf.js/issues/1237) or …
 
 
