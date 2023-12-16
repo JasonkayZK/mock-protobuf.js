@@ -1,6 +1,6 @@
 {
     "name": "mock-pb-cli",
-    "version": "v1.1.1",
+    "version": "v1.1.2",
     "scripts": {
         "c": "tsc",
         "serve": "ts-node src/index.ts",
@@ -50,7 +50,7 @@
         "globby": "^11.0.0",
         "mockjs": "^1.1.0",
         "protobufjs": "^7.1.0",
-        "restify": "^8.6.1",
+        "restify": "^v11.1.0",
         "shelljs": "^0.8.5"
     }
 }
