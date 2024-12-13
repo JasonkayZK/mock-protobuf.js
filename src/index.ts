@@ -2,7 +2,7 @@
 const path = require('path');
 const fs = require('fs');
 const {Command} = require('commander');
-const {DirOption, IncludeOption, ExcludeOption, PortOption, OutputPathOption, ConfigOption} = require('./commands/options')
+const {DirOption, IncludeOption, ExcludeOption, PortOption, OutputPathOption, ConfigOption, ImportPathOption} = require('./commands/options')
 const generate = require('./commands/generate');
 const serve = require('./commands/serve');
 
@@ -25,6 +25,7 @@ program.command('s').alias('serve')
     .addOption(ExcludeOption)
     .addOption(PortOption)
     .addOption(ConfigOption)
+    .addOption(ImportPathOption)
     .action(serve).description("Create a mock server for the given protobuf");
 
 program.command('g').alias('generate')
@@ -32,6 +33,7 @@ program.command('g').alias('generate')
     .addOption(IncludeOption)
     .addOption(ExcludeOption)
     .addOption(OutputPathOption)
+    .addOption(ImportPathOption)
     .action(generate).description("Generate mock data for the given protobuf");
 
 program.parse();

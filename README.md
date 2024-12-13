@@ -386,6 +386,15 @@ Will generate nothing!
 
 <br/>
 
+### Include third party protos
+
+You may use third party protobuf type in your protobuf, so you may specify custom path of them.
+
+For example:
+
+```
+$ mock-pb g -m custom/path
+```
 
 
 ## **Known Issue**

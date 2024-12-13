@@ -9,6 +9,7 @@ interface MockHandlerOptions {
     include: string,
     exclude: string,
     responseHandlerMap?: Map<string, ResponseHandler>;
+    import?: string;
     hackMockTpl?: (
         key: string,
         type: string,
@@ -25,7 +26,7 @@ function generateMockHandlersMap(
     const {include, exclude, responseHandlerMap, hackMockTpl} = options;
 
     // Step 1: Load protobuf definitions
-    const pkgDefinition = loadProtobufDefinition(repository);
+    const pkgDefinition = loadProtobufDefinition(repository, options.import);
 
     // Step 2: Filter if necessary
     let [_, __, filteredMethodsMap] = filterProtobufDefinitions(pkgDefinition, ...getProtobufFiltersFromOptions(include, exclude));
