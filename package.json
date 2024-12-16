@@ -1,6 +1,6 @@
 {
     "name": "mock-pb-cli",
-    "version": "v1.1.2",
+    "version": "v1.1.3",
     "scripts": {
         "c": "tsc",
         "serve": "ts-node src/index.ts",
