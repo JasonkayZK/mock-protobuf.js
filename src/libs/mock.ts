@@ -3,6 +3,8 @@ import globby from 'globby';
 import shell from "shelljs";
 import protobuf, {Method, Root} from 'protobufjs';
 import {MockjsRandom, Random} from 'mockjs';
+import { existsSync } from 'fs';
+import { getImportPaths, getResolveProtoPathsFunction } from './path';
 
 const TYPES: { [key: string]: string } = {
     double: '@float',
@@ -22,7 +24,9 @@ const TYPES: { [key: string]: string } = {
     bytes: '@sentence(1, 5)',
 };
 
-export function loadProtobufDefinition(repository: string) {
+export function loadProtobufDefinition(repository: string, importString: string = '') {
+    const imports = getImportPaths(importString);
+
     const absFilePaths = path.posix.join(repository, '**/*.proto');
 
     // Load all protobuf files under the repository
@@ -30,8 +34,12 @@ export function loadProtobufDefinition(repository: string) {
 
     // Process each protobuf files, and solve semantic analysis errors caused by compatible annotations
     shell.sed('-i', /\/\*\/\//g, '/* //', protoPaths);
-    return protoPaths.map(protoPaths => {
+    const paths = protoPaths.map(protoPaths => {
+      return path.posix.join(process.cwd(), protoPaths);
+    });
+    return paths.map(protoPaths => {
         const root = new protobuf.Root();
+        root.resolvePath = getResolveProtoPathsFunction(imports);
         return root.loadSync(protoPaths, {keepCase: true, alternateCommentMode: false, preferTrailingComment: false});
     });
 }

@@ -6,6 +6,7 @@ import {
     filterProtobufDefinitions,
     getProtobufFiltersFromOptions, ProtobufMessage,
 } from "../libs/filter";
+import protobuf from 'protobufjs';
 
 interface GenerateCmdOptions {
 
@@ -16,13 +17,15 @@ interface GenerateCmdOptions {
     exclude?: string | undefined;
 
     output: string;
+
+    import?: string | undefined;
 }
 
 module.exports = (options: GenerateCmdOptions) => {
     // console.log(options);
 
     // Step 1: Load protobuf definitions
-    let pkgDefinition = loadProtobufDefinition(options.dir);
+    let pkgDefinition = loadProtobufDefinition(options.dir, options.import);
 
     // Step 2: Filter if necessary
     let [filteredMessages, _] = filterProtobufDefinitions(pkgDefinition, ...getProtobufFiltersFromOptions(options.include, options.exclude));
