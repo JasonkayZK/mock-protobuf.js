@@ -11,6 +11,8 @@ interface ServeCmdOptions {
     port: number | undefined;
 
     config: string;
+
+    import?: string | undefined;
 }
 
 module.exports = function (options: ServeCmdOptions) {
@@ -19,6 +21,7 @@ module.exports = function (options: ServeCmdOptions) {
     createServer(options.dir, {
         include: options.include,
         exclude: options.exclude,
+        import: options.import,
         /*
           The param data is result of mock.js
           https://github.com/nuysoft/Mock

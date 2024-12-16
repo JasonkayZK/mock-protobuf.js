@@ -16,4 +16,6 @@ let OutputPathOption = new Option('-o, --output <string>', 'output path for resu
 
 let ConfigOption = new Option('-c, --config <string>', 'the config file path').default('mock-protobuf.config.json');
 
-module.exports = {DirOption, PortOption, IncludeOption, ExcludeOption, OutputPathOption, ConfigOption: ConfigOption};
+let ImportPathOption = new Option('-m, --import <string>', 'the import path for the proto files, multiple paths split by ",", ' + 'such as: "./proto"').default('');
+
+module.exports = {DirOption, PortOption, IncludeOption, ExcludeOption, OutputPathOption, ConfigOption: ConfigOption, ImportPathOption};
